@@ -8,7 +8,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const { useRef, useEffect } = React;
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
+var breathVal = 5000;
 
 // Home Page
 function HomePage({ navigation }) {
@@ -36,15 +38,15 @@ function RestPage({ navigation }) {
   useEffect(() => {
     // Sequence for fading out text and fading in ball
     Animated.sequence([
-      Animated.delay(4000), // Wait for 4 seconds
+      Animated.delay(2000), // Wait...
       Animated.timing(fadeAnim, { // Fade out the text
         toValue: 0,
-        duration: 2000,
+        duration: 1000,
         useNativeDriver: true,
       }),
       Animated.timing(ballOpacity, { // Fade in the ball
         toValue: 1,
-        duration: 2000,
+        duration: 1000,
         useNativeDriver: true,
       }),
     ]).start(() => {
@@ -52,15 +54,16 @@ function RestPage({ navigation }) {
       Animated.loop(
         Animated.sequence([
           Animated.timing(ballScale, {
-            toValue: 9, // Scale up
-            duration: 10000,
+            toValue: 0, // Scale down
+            duration: breathVal,
             useNativeDriver: true,
           }),
           Animated.timing(ballScale, {
-            toValue: 1, // Scale down
-            duration: 2000,
+            toValue: 1, // Scale up
+            duration: breathVal,
             useNativeDriver: true,
           }),
+          Animated.delay(500), // Pause for a split second (500 milliseconds) at original size
         ])
       ).start();
     });
@@ -122,10 +125,10 @@ const styles = StyleSheet.create({
     position: 'absolute', // Allows the text and the ball to occupy the same space
   },
   ball: {
-    width: 50,
-    height: 50,
+    width: screenWidth*1.3,
+    height: screenWidth*1.3,
     backgroundColor: 'blue',
-    borderRadius: 25, // Make it a circle
+    borderRadius: 1000, // Make it a circle
     position: 'absolute', // Allows the text and the ball to occupy the same space
     opacity: 0, // Start invisible
   },
