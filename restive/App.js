@@ -12,6 +12,7 @@ const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
 var breathVal = 5000;
 
+
 // Home Page
 function HomePage({ navigation }) {
   return (
@@ -30,25 +31,31 @@ function HomePage({ navigation }) {
   );
 }
 
+// --------------------------------------------------------------------------------------------- rest page main funtion
+// --------------------------------------------------------------------------------------------------------------------
 function RestPage({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
   const ballScale = useRef(new Animated.Value(1)).current; // Initial scale for the ball
+  const [counter, setCounter] = useState(0); // Initialize counter state
 
   useEffect(() => {
     // Sequence for fading out text and fading in ball
     Animated.sequence([
       Animated.delay(2000), // Wait...
+
       Animated.timing(fadeAnim, { // Fade out the text
         toValue: 0,
         duration: 1000,
         useNativeDriver: true,
       }),
+
       Animated.timing(ballOpacity, { // Fade in the ball
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
       }),
+
     ]).start(() => {
       // After the sequence is complete, start the breathing effect
       Animated.loop(
@@ -63,25 +70,40 @@ function RestPage({ navigation }) {
             duration: breathVal,
             useNativeDriver: true,
           }),
+
           Animated.delay(500), // Pause for a split second (500 milliseconds) at original size
+
         ])
       ).start();
+
     });
   }, [fadeAnim, ballOpacity, ballScale]);
 
   return (
     <View style={styles.container}>
+
       <StatusBar style="auto" />
-      <Animated.Text style={[styles.fadeText, { opacity: fadeAnim }]}>
-        breathe in...
+
+      <Animated.Text 
+        style={[styles.fadeText, { 
+          opacity: fadeAnim }]}>
+        breathe in... {/* text here will fade into display as soon as the page is opened, then fade out as per fadeAnim is assigned in the earlier code */}
       </Animated.Text>
-      <Animated.View style={[styles.ball, { 
-        opacity: ballOpacity, 
-        transform: [{ scale: ballScale }] // Apply scaling animation
-      }]} />
+
+      <Animated.View 
+        style={[styles.ball, { 
+          opacity: ballOpacity, 
+          transform: [{ scale: ballScale }] // Apply scaling animation
+        }]} 
+      />
+
     </View>
   );
 }
+
+
+//----------------------------- >>>> END REST PAGE >>----------------------------- >>>>
+//----------------------------- >>>> END REST PAGE >>----------------------------- >>>>
 
 // Settings Page
 function SettingsPage() {
