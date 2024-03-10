@@ -29,58 +29,53 @@ function HomePage({ navigation }) {
 }
 
 function RestPage({ navigation }) {
-  const inOpacity = useRef(new Animated.Value(0)).current;
-  const ballOpacity = useRef(new Animated.Value(0)).current; // Opacity for the blue ball
-  const ballScale = useRef(new Animated.Value(1)).current; // Scale for the blue ball
+  const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
+  const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
+  const ballScale = useRef(new Animated.Value(1)).current; // Initial scale for the ball
 
   useEffect(() => {
-    // Sequence: Text fades in, then after a delay, the blue ball appears
+    // Sequence for fading out text and fading in ball
     Animated.sequence([
-      Animated.timing(inOpacity, {
-        toValue: 1,
-        duration: 4000,
+      Animated.delay(4000), // Wait for 4 seconds
+      Animated.timing(fadeAnim, { // Fade out the text
+        toValue: 0,
+        duration: 2000,
         useNativeDriver: true,
       }),
-      Animated.delay(4000), // Wait for 4 seconds after text animation
-      Animated.timing(ballOpacity, { // Fade in the blue ball
+      Animated.timing(ballOpacity, { // Fade in the ball
         toValue: 1,
         duration: 2000,
         useNativeDriver: true,
       }),
-    ]).start();
-
-    // Loop for the blue ball growing and shrinking
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(ballScale, {
-          toValue: 1.5, // Grow the ball to 1.5 times its size
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(ballScale, {
-          toValue: 1, // Shrink the ball back to its original size
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [inOpacity, ballOpacity, ballScale]);
+    ]).start(() => {
+      // After the sequence is complete, start the breathing effect
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(ballScale, {
+            toValue: 9, // Scale up
+            duration: 10000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(ballScale, {
+            toValue: 1, // Scale down
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    });
+  }, [fadeAnim, ballOpacity, ballScale]);
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Animated.Text style={{ color: "blue", fontSize: cellHeight / 6, opacity: inOpacity }}>
+      <Animated.Text style={[styles.fadeText, { opacity: fadeAnim }]}>
         breathe in...
       </Animated.Text>
-      <Animated.View style={{
-        opacity: ballOpacity,
-        width: 50, // Initial size
-        height: 50,
-        backgroundColor: 'blue',
-        borderRadius: 25, // Make it a circle
-        marginTop: 20, // Adjust spacing as needed
-        transform: [{ scale: ballScale }], // Apply the scaling
-      }} />
+      <Animated.View style={[styles.ball, { 
+        opacity: ballOpacity, 
+        transform: [{ scale: ballScale }] // Apply scaling animation
+      }]} />
     </View>
   );
 }
@@ -116,9 +111,22 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000', // force dark background
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#000', // force dark mode
+    position: 'relative', // Needed for absolute positioning
   },
-  
+  fadeText: {
+    color: "blue",
+    fontSize: cellHeight/6, // Adjust as needed
+    position: 'absolute', // Allows the text and the ball to occupy the same space
+  },
+  ball: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'blue',
+    borderRadius: 25, // Make it a circle
+    position: 'absolute', // Allows the text and the ball to occupy the same space
+    opacity: 0, // Start invisible
+  },
 });
