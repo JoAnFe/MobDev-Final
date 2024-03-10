@@ -1,9 +1,11 @@
 import * as React from 'react';
-import React, {useRef, useEffect} from 'react';
+//import React, {useRef, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const { useRef, useEffect } = React;
 
 const screenWidth = Dimensions.get('window').width;
 const cellHeight = screenWidth/1.4;
@@ -26,41 +28,59 @@ function HomePage({ navigation }) {
   );
 }
 
-// Rest Page
 function RestPage({ navigation }) {
+  const inOpacity = useRef(new Animated.Value(0)).current;
+  const ballOpacity = useRef(new Animated.Value(0)).current; // Opacity for the blue ball
+  const ballScale = useRef(new Animated.Value(1)).current; // Scale for the blue ball
 
-  const AnimatedText = (props) => {
-    const textOpacity = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    // Sequence: Text fades in, then after a delay, the blue ball appears
+    Animated.sequence([
+      Animated.timing(inOpacity, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      }),
+      Animated.delay(4000), // Wait for 4 seconds after text animation
+      Animated.timing(ballOpacity, { // Fade in the blue ball
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
-    React.useEffect(() => {
-      Animated.timing(
-        textOpacity,
-        {
-          toValue: 1,
-          duration: 4000
-        }
-      ).start();
-    }, [textOpacity])
-
-    return (
-      <Animated.Text
-        style={{
-          ...props.style,
-          opacity: textOpacity
-        }}
-      >
-        {props.children}
-      </Animated.Text>
-    )
-  }
+    // Loop for the blue ball growing and shrinking
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(ballScale, {
+          toValue: 1.5, // Grow the ball to 1.5 times its size
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(ballScale, {
+          toValue: 1, // Shrink the ball back to its original size
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [inOpacity, ballOpacity, ballScale]);
 
   return (
     <View style={styles.container}>
-     <StatusBar style="auto" />
-        <AnimatedText style={{color: "blue", fontSize: cellHeight/6}}>
-          breathe in...
-        </AnimatedText>
-
+      <StatusBar style="auto" />
+      <Animated.Text style={{ color: "blue", fontSize: cellHeight / 6, opacity: inOpacity }}>
+        breathe in...
+      </Animated.Text>
+      <Animated.View style={{
+        opacity: ballOpacity,
+        width: 50, // Initial size
+        height: 50,
+        backgroundColor: 'blue',
+        borderRadius: 25, // Make it a circle
+        marginTop: 20, // Adjust spacing as needed
+        transform: [{ scale: ballScale }], // Apply the scaling
+      }} />
     </View>
   );
 }
