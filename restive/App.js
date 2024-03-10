@@ -3,6 +3,7 @@ import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import {  TableView, Section, Cell } from 'react-native-tableview-simple';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const { useRef, useEffect } = React;
@@ -37,7 +38,7 @@ function RestPage({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
   const ballScale = useRef(new Animated.Value(1)).current; // Initial scale for the ball
-  const [counter, setCounter] = useState(0); // Initialize counter state
+ // const [counter, setCounter] = useState(0); // Initialize counter state
 
   useEffect(() => {
     // Sequence for fading out text and fading in ball
@@ -106,10 +107,72 @@ function RestPage({ navigation }) {
 //----------------------------- >>>> END REST PAGE >>----------------------------- >>>>
 
 // Settings Page
-function SettingsPage() {
+const SettingsPage = () => {
+  return (
+    <SafeAreaView style={styles.settings}>
+
+      <TableView style={styles.tableContainer}>
+        <Section>
+          <Cell
+            cellContentView={
+              <View style={[styles.cellContent, styles.cellTop]}>
+                {/* Content of your top cell */}
+                <Text style={styles.cellText}>Default timer</Text>
+              </View>
+            }
+            accessory="DisclosureIndicator"
+            onPress={() => {/* Navigate to timer settings */}}
+          />
+          <Cell
+            cellStyle="Basic"
+            title="Reset progress"
+            accessory="DisclosureIndicator"
+            titleTextColor="#ffffff"
+            backgroundColor="#424242" // Use the grey color for the cell
+            onPress={() => {/* Reset the counter logic */}}
+          />
+          <Cell
+            cellContentView={
+              <View style={[styles.cellContent, styles.cellBottom]}>
+                {/* Content of your bottom cell */}
+                <Text style={styles.cellText}>Total time spent resting:</Text>
+                <Text style={styles.cellDetail}>120 min</Text>
+              </View>
+            }
+            accessory="DisclosureIndicator"
+            onPress={() => {/* Additional logic if needed */}}
+          />
+        </Section>
+      </TableView>
+
+    </SafeAreaView>
+  );
+};
+const InfoButton = () => {
+  // Custom accessory view component (e.g. an information icon)
+  // React to onPress to show more info about resting time
+  return;
+};
+
+// function SettingsPage({ navigation }) {
+//   return (
+//     <View style={styles.container}>
+//       <Text>Settings Page</Text>
+//       <Button
+//         title="change timer"
+//         onPress={() => navigation.navigate('Timer')}
+//       />
+//       <StatusBar style="auto" />
+//     </View>
+    
+//   );
+// }
+
+// Timer Page
+function TimerPage() {
   return (
     <View style={styles.container}>
-      <Text>Settings Page</Text>
+      <Text>...</Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -128,10 +191,14 @@ export default function App() {
         <Stack.Screen name="Home" component={HomePage} />
         <Stack.Screen name="Rest" component={RestPage} />
         <Stack.Screen name="Settings" component={SettingsPage} />
+        <Stack.Screen name="Timer" component={TimerPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+
+// STYLES 
 
 const styles = StyleSheet.create({
   container: {
@@ -140,6 +207,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#000', // force dark mode
     position: 'relative', // Needed for absolute positioning
+  },
+  settings: {
+    flex: 1,
+    backgroundColor: '#000', // Dark background color
+  },
+  tableContainer: {
+    margin: 15,
+    backgroundColor: 'transparent', // Set the background color to transparent
+  },
+  cell: {
+    backgroundColor: '#424242', // Grey color for the cell
+  },
+  cellContent: {
+    flexDirection: 'row', 
+    alignItems: 'center',
+    padding: 10, // Adjust the padding as needed
+  },
+  cellTop: {
+    borderTopLeftRadius: 10, // Rounded top-left corner
+    borderTopRightRadius: 10, // Rounded top-right corner
+    backgroundColor: '#424242',
+  },
+  cellBottom: {
+    borderBottomLeftRadius: 10, // Rounded bottom-left corner
+    borderBottomRightRadius: 10, // Rounded bottom-right corner
+    backgroundColor: '#424242',
+  },
+  cellText: {
+    flex: 1,
+    color: '#ffffff', // White text color
+  },
+  cellDetail: {
+    color: '#ffffff', // White text color for the detail
   },
   fadeText: {
     color: "blue",
