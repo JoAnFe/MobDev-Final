@@ -1,7 +1,8 @@
 import * as React from 'react';
+import 'react-native-gesture-handler';
 //import React, {useRef, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView } from 'react-native';
+import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView, Alert } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import {  TableView, Section, Cell } from 'react-native-tableview-simple';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -110,41 +111,45 @@ function RestPage({ navigation }) {
 const SettingsPage = () => {
   return (
     <SafeAreaView style={styles.settings}>
-
+    
       <TableView style={styles.tableContainer}>
-        <Section>
+      
+        <Section sectionTintColor="transparent">
           <Cell
+          accessory="DisclosureIndicator"
             cellContentView={
-              <View style={[styles.cellContent, styles.cellTop]}>
-                {/* Content of your top cell */}
+              <View style={[styles.cellContent, styles.cellTop]}> 
                 <Text style={styles.cellText}>Default timer</Text>
               </View>
             }
-            accessory="DisclosureIndicator"
+            
             onPress={() => {/* Navigate to timer settings */}}
           />
+
           <Cell
-            cellStyle="Basic"
-            title="Reset progress"
-            accessory="DisclosureIndicator"
-            titleTextColor="#ffffff"
-            backgroundColor="#424242" // Use the grey color for the cell
-            onPress={() => {/* Reset the counter logic */}}
+          accessory="DisclosureIndicator"
+            cellContentView={
+              <View style={[styles.cellContent, styles.cell]}>
+                <Text style={styles.cellText}>Reset progress</Text>
+                <Text style={styles.cellDetail}></Text>
+              </View>
+            }
+            onPress={() => {Alert.alert("Progress has been reset ");}} // Reset the counter logic
           />
           <Cell
+          accessory="DisclosureIndicator"
             cellContentView={
               <View style={[styles.cellContent, styles.cellBottom]}>
-                {/* Content of your bottom cell */}
                 <Text style={styles.cellText}>Total time spent resting:</Text>
                 <Text style={styles.cellDetail}>120 min</Text>
               </View>
             }
-            accessory="DisclosureIndicator"
             onPress={() => {/* Additional logic if needed */}}
           />
         </Section>
+       
       </TableView>
-
+      
     </SafeAreaView>
   );
 };
@@ -154,19 +159,6 @@ const InfoButton = () => {
   return;
 };
 
-// function SettingsPage({ navigation }) {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Settings Page</Text>
-//       <Button
-//         title="change timer"
-//         onPress={() => navigation.navigate('Timer')}
-//       />
-//       <StatusBar style="auto" />
-//     </View>
-    
-//   );
-// }
 
 // Timer Page
 function TimerPage() {
@@ -182,6 +174,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const scheme = useColorScheme(); // Hook to get the color scheme
+  const pan = useRef(new Animated.ValueXY()).current;
 
 
   
@@ -205,28 +198,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#000', // force dark mode
+    backgroundColor: 'transparent', // force dark mode
     position: 'relative', // Needed for absolute positioning
   },
+
   settings: {
     flex: 1,
     backgroundColor: '#000', // Dark background color
   },
   tableContainer: {
     margin: 15,
-    backgroundColor: 'transparent', // Set the background color to transparent
-  },
-  cell: {
-    backgroundColor: '#424242', // Grey color for the cell
-  },
-  cellContent: {
-    flexDirection: 'row', 
-    alignItems: 'center',
-    padding: 10, // Adjust the padding as needed
+    backgroundColor: '#000', // Set the background color to transparent
   },
   cellTop: {
     borderTopLeftRadius: 10, // Rounded top-left corner
     borderTopRightRadius: 10, // Rounded top-right corner
+    backgroundColor: '#424242',
+  },
+  cellContent: {
+    flexDirection: 'row', 
+    alignItems: 'center',
+    padding: screenHeight/45, // Adjust the padding as needed
     backgroundColor: '#424242',
   },
   cellBottom: {
@@ -255,3 +247,6 @@ const styles = StyleSheet.create({
     opacity: 0, // Start invisible
   },
 });
+
+// add scrolling gestures
+// useRef to track touch distance
