@@ -2,20 +2,21 @@ import * as React from 'react';
 import 'react-native-gesture-handler';
 //import React, {useRef, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView, Alert } from 'react-native';
+import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView, Alert, TouchableOpacity, FlatList } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import {  TableView, Section, Cell } from 'react-native-tableview-simple';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { useRef, useEffect } = React;
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
+ // const [counter, setCounter] = useState(0); // Initialize counter state
 var breathVal = 5000;
 
-
-// Home Page
+/////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
 function HomePage({ navigation }) {
   return (
     <View style={styles.container}>
@@ -33,13 +34,12 @@ function HomePage({ navigation }) {
   );
 }
 
-// --------------------------------------------------------------------------------------------- rest page main funtion
-// --------------------------------------------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
+
 function RestPage({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
   const ballScale = useRef(new Animated.Value(1)).current; // Initial scale for the ball
- // const [counter, setCounter] = useState(0); // Initialize counter state
 
   useEffect(() => {
     // Sequence for fading out text and fading in ball
@@ -103,56 +103,120 @@ function RestPage({ navigation }) {
   );
 }
 
-
-//----------------------------- >>>> END REST PAGE >>----------------------------- >>>>
-//----------------------------- >>>> END REST PAGE >>----------------------------- >>>>
-
-// Settings Page
-const SettingsPage = () => {
+////////////////////////////////////////////////////////////////////////////////////////////////////// Settings Page
+const SystemButton = ({ title, onPress }) => {
   return (
-    <SafeAreaView style={styles.settings}>
-    
-      <TableView style={styles.tableContainer}>
-      
-        <Section sectionTintColor="transparent">
-          <Cell
-          accessory="DisclosureIndicator"
-            cellContentView={
-              <View style={[styles.cellContent, styles.cellTop]}> 
-                <Text style={styles.cellText}>Default timer</Text>
-              </View>
-            }
-            
-            onPress={() => {/* Navigate to timer settings */}}
-          />
-
-          <Cell
-          accessory="DisclosureIndicator"
-            cellContentView={
-              <View style={[styles.cellContent, styles.cell]}>
-                <Text style={styles.cellText}>Reset progress</Text>
-                <Text style={styles.cellDetail}></Text>
-              </View>
-            }
-            onPress={() => {Alert.alert("Progress has been reset ");}} // Reset the counter logic
-          />
-          <Cell
-          accessory="DisclosureIndicator"
-            cellContentView={
-              <View style={[styles.cellContent, styles.cellBottom]}>
-                <Text style={styles.cellText}>Total time spent resting:</Text>
-                <Text style={styles.cellDetail}>120 min</Text>
-              </View>
-            }
-            onPress={() => {/* Additional logic if needed */}}
-          />
-        </Section>
-       
-      </TableView>
-      
-    </SafeAreaView>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Text style={styles.buttonText}>{title}</Text>
+      <Icon name="chevron-right" size={30} color="#5a5a5f" />
+    </TouchableOpacity>
   );
 };
+const SettingsPage = ({ navigation }) => {
+
+  const DATA = [
+    { id: '1', title: 'Default timer', link: 'Timer', detail: '' },
+    { id: '2', title: 'Reset progress', detail: '' },
+    { id: '3', title: 'Total time', detail: '' },
+    // ... more items
+  ];
+  
+  const Item = ({ title, link, detail }) => {
+    const handlePress = () => {
+      if (link) {
+        navigation.navigate(link);
+      } else if (title === 'Reset progress') {
+        // Assuming you want to show an alert for reset progress
+        Alert.alert("Reset Progress", "Are you sure?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Yes", onPress: () => console.log("Resetting Progress...") }, // need to add action here
+        ]);
+      }
+    };
+
+    return (
+      <View style={styles.item}>
+        <SystemButton
+          title={`${title} ${detail}`}
+          onPress={handlePress}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <FlatList
+      data={DATA}
+      renderItem={({ item }) => <Item title={item.title} link={item.link} detail={item.detail} />}
+      keyExtractor={item => item.id}
+      contentContainerStyle={styles.listInset} // Applying the inset style here
+    />
+  );
+///////////////////////////////////////////////////////// --- the below works
+//   return (
+//     <View style={styles.settings}>
+//       {/* ... other settings components ... */}
+//       <SystemButton
+//         title="Default timer"
+//         onPress={() => navigation.navigate('Timer')}
+//       />
+//       <SystemButton
+//         title="Reset progress"
+//         onPress={() => {Alert.alert("Progress has been reset ");}}
+//       />
+//       {/* ... other settings components ... */}
+//     </View>
+//   );
+    };
+//////////////////////////////////////////////////////// --- the above works
+
+// const SettingsPage = () => {
+//   return (
+//     <SafeAreaView style={styles.settings}>
+    
+//       <TableView style={styles.tableContainer}>
+      
+//         <Section sectionTintColor="transparent">
+//           <Cell
+//           accessory="DisclosureIndicator"
+//             cellContentView={
+//               <View style={[styles.cellContent, styles.cellTop]}> 
+//                 <Text style={styles.cellText}>Default timer</Text>
+//               </View>
+//             }
+            
+//             onPress={() => {/* Navigate to timer settings */}}
+//           />
+
+//           <Cell
+//           accessory="DisclosureIndicator"
+//             cellContentView={
+//               <View style={[styles.cellContent, styles.cell]}>
+//                 <Text style={styles.cellText}>Reset progress</Text>
+//                 <Text style={styles.cellDetail}></Text>
+//               </View>
+//             }
+//             onPress={() => {Alert.alert("Progress has been reset ");}} // Reset the counter logic
+//           />
+//           <Cell
+//           accessory="DisclosureIndicator"
+//             cellContentView={
+//               <View style={[styles.cellContent, styles.cellBottom]}>
+//                 <Text style={styles.cellText}>Total time spent resting:</Text>
+//                 <Text style={styles.cellDetail}>120 min</Text>
+//               </View>
+//             }
+//             onPress={() => {/* Additional logic if needed */}}
+//           />
+//         </Section>
+       
+//       </TableView>
+      
+//     </SafeAreaView>
+//   );
+// };
+
+
 const InfoButton = () => {
   // Custom accessory view component (e.g. an information icon)
   // React to onPress to show more info about resting time
@@ -160,7 +224,7 @@ const InfoButton = () => {
 };
 
 
-// Timer Page
+////////////////////////////////////////////////////////////////////////////////////////////////////// Timer Page
 function TimerPage() {
   return (
     <View style={styles.container}>
@@ -170,14 +234,14 @@ function TimerPage() {
   );
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////// APP START
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const scheme = useColorScheme(); // Hook to get the color scheme
   const pan = useRef(new Animated.ValueXY()).current;
 
-
-  
   return (
     <NavigationContainer theme={DarkTheme}>
       <Stack.Navigator initialRouteName="Home">
@@ -201,38 +265,45 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', // force dark mode
     position: 'relative', // Needed for absolute positioning
   },
-
   settings: {
     flex: 1,
-    backgroundColor: '#000', // Dark background color
+    backgroundColor: '#000', 
   },
-  tableContainer: {
-    margin: 15,
-    backgroundColor: '#000', // Set the background color to transparent
-  },
-  cellTop: {
-    borderTopLeftRadius: 10, // Rounded top-left corner
-    borderTopRightRadius: 10, // Rounded top-right corner
-    backgroundColor: '#424242',
-  },
-  cellContent: {
-    flexDirection: 'row', 
+  button: { // causes issues
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: screenHeight/45, // Adjust the padding as needed
-    backgroundColor: '#424242',
+    backgroundColor: 'transparent',
+    padding: 10,
+  
   },
-  cellBottom: {
-    borderBottomLeftRadius: 10, // Rounded bottom-left corner
-    borderBottomRightRadius: 10, // Rounded bottom-right corner
-    backgroundColor: '#424242',
+  buttonText: {
+    color: 'white', // Text color
+    fontSize: screenHeight/50,
   },
-  cellText: {
-    flex: 1,
-    color: '#ffffff', // White text color
-  },
-  cellDetail: {
-    color: '#ffffff', // White text color for the detail
-  },
+  // cellTop: {
+  //   borderTopLeftRadius: 10, // Rounded top-left corner
+  //   borderTopRightRadius: 10, // Rounded top-right corner
+  //   backgroundColor: '#424242',
+  // },
+  // cellContent: {
+  //   flexDirection: 'row', 
+  //   alignItems: 'center',
+  //   padding: screenHeight/45, // Adjust the padding as needed
+  //   backgroundColor: '#424242',
+  // },
+  // cellBottom: {
+  //   borderBottomLeftRadius: 10, // Rounded bottom-left corner
+  //   borderBottomRightRadius: 10, // Rounded bottom-right corner
+  //   backgroundColor: '#424242',
+  // },
+  // cellText: {
+  //   flex: 1,
+  //   color: '#ffffff', // White text color
+  // },
+  // cellDetail: {
+  //   color: '#ffffff', // White text color for the detail
+  // },
   fadeText: {
     color: "blue",
     fontSize: cellHeight/6, // Adjust as needed
@@ -245,6 +316,24 @@ const styles = StyleSheet.create({
     borderRadius: 1000, // Make it a circle
     position: 'absolute', // Allows the text and the ball to occupy the same space
     opacity: 0, // Start invisible
+  },
+  listInset: {
+    paddingTop: screenWidth/8,
+    paddingVertical: 10, // Vertical padding for the whole list
+    paddingHorizontal: 16, // Horizontal padding for the list's inset style
+    //backgroundColor: '#000', // dark mode
+  },
+  item: { // SETTINGS CELL 
+    //alignContent: 'left',
+    backgroundColor: '#1C1C1E', // need to find the correct system colour... but this is the background to the settings cell
+    padding: screenHeight/1000,
+    marginVertical: 1,
+    //marginHorizontal: 1,
+    borderRadius: 10, // Rounded corners for each item
+  },
+  title: {
+    fontSize: 18,
+    color: '#000'
   },
 });
 
