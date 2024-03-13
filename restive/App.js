@@ -8,7 +8,7 @@ import {  TableView, Section, Cell } from 'react-native-tableview-simple';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const { useRef, useEffect } = React;
+const { useRef, useState, useEffect, createContext, useContext } = React;
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -17,22 +17,85 @@ const cellHeight = screenWidth/1.4;
 var breathVal = 5000;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
-function HomePage({ navigation }) {
+
+
+
+const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
+
+
+// Create a context for global state
+const CircleVisibilityContext = createContext();
+const useCircleVisibility = () => useContext(CircleVisibilityContext);
+
+// Define a provider component for global state
+const CircleVisibilityProvider = ({ children }) => {
+  const [visibilityCount, setVisibilityCount] = useState(0); // Global state for visibility control
+
   return (
-    <View style={styles.container}>
-      <Text>Home Page</Text>
-      <Button
-        title="rest"
-        onPress={() => navigation.navigate('Rest')}
-      />
-      <Button
-        title="settings"
-        onPress={() => navigation.navigate('Settings')}
-      />
-      <StatusBar style="auto" />
+    <CircleVisibilityContext.Provider value={{ visibilityCount, setVisibilityCount }}>
+      {children}
+    </CircleVisibilityContext.Provider>
+  );
+};
+
+// Individual small red circle component
+const SmallRedCircle = ({ index }) => {
+  const { visibilityCount } = useCircleVisibility();
+  return (
+    <View style={styles.gridItem}>
+      {index < 10 && (
+        <View style={styles.smallCircle} />
+      )}
     </View>
   );
+};
+
+// The modified HomePage component
+function HomePage({ navigation }) {
+  // Assuming ballOpacity and ballScale are defined in your state/logic
+
+  return (
+    <CircleVisibilityProvider>
+      <View style={styles.container}>
+        <View style={styles.gridContainer}>
+          {Array.from({ length: 9 }).map((_, index) => (
+            <SmallRedCircle key={index} index={index} />
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.largeCircle} onPress={() => navigation.navigate('Rest')} />
+
+        <StatusBar style="auto" />
+      </View>
+    </CircleVisibilityProvider>
+  );
 }
+
+// function HomePage({ navigation }) {
+//   return (
+//     <View style={styles.container}>
+//       <Text>Home Page</Text>
+
+//       <Animated.View 
+//         style={[styles.ball, { 
+//           opacity: ballOpacity, 
+//           transform: [{ scale: ballScale }] // Apply scaling animation
+//         }]} 
+//       />
+
+//       <Button
+//         title="rest"
+//         onPress={() => navigation.navigate('Rest')}
+//       />
+      
+//       <Button
+//         title="settings"
+//         onPress={() => navigation.navigate('Settings')}
+//       />
+//       <StatusBar style="auto" />
+//     </View>
+//   );
+// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
 
@@ -334,6 +397,37 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     color: '#000'
+  },
+
+  //
+  gridContainer: {
+    position: 'absolute',
+    top: 0,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '100%',
+    height: '33%',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  gridItem: {
+    width: `${100 / 3}%`, // Divide the top third into 3 columns
+    height: '33%', // Each item is 1/3 of the top third
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  smallCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'red',
+  },
+  largeCircle: {
+    width: circleDiameter,
+    height: circleDiameter,
+    borderRadius: circleDiameter / 2,
+    backgroundColor: 'blue',
+    marginBottom: -(circleDiameter / 3), // Adjust based on your layout needs
   },
 });
 
