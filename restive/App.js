@@ -71,32 +71,6 @@ function HomePage({ navigation }) {
   );
 }
 
-// function HomePage({ navigation }) {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Home Page</Text>
-
-//       <Animated.View 
-//         style={[styles.ball, { 
-//           opacity: ballOpacity, 
-//           transform: [{ scale: ballScale }] // Apply scaling animation
-//         }]} 
-//       />
-
-//       <Button
-//         title="rest"
-//         onPress={() => navigation.navigate('Rest')}
-//       />
-      
-//       <Button
-//         title="settings"
-//         onPress={() => navigation.navigate('Settings')}
-//       />
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
 
 function RestPage({ navigation }) {
@@ -298,7 +272,6 @@ function TimerPage() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////// APP START
-
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -318,8 +291,7 @@ export default function App() {
 }
 
 
-// STYLES 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////// STYLES 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -344,29 +316,6 @@ const styles = StyleSheet.create({
     color: 'white', // Text color
     fontSize: screenHeight/50,
   },
-  // cellTop: {
-  //   borderTopLeftRadius: 10, // Rounded top-left corner
-  //   borderTopRightRadius: 10, // Rounded top-right corner
-  //   backgroundColor: '#424242',
-  // },
-  // cellContent: {
-  //   flexDirection: 'row', 
-  //   alignItems: 'center',
-  //   padding: screenHeight/45, // Adjust the padding as needed
-  //   backgroundColor: '#424242',
-  // },
-  // cellBottom: {
-  //   borderBottomLeftRadius: 10, // Rounded bottom-left corner
-  //   borderBottomRightRadius: 10, // Rounded bottom-right corner
-  //   backgroundColor: '#424242',
-  // },
-  // cellText: {
-  //   flex: 1,
-  //   color: '#ffffff', // White text color
-  // },
-  // cellDetail: {
-  //   color: '#ffffff', // White text color for the detail
-  // },
   fadeText: {
     color: "blue",
     fontSize: cellHeight/6, // Adjust as needed
@@ -433,3 +382,55 @@ const styles = StyleSheet.create({
 
 // add scrolling gestures
 // useRef to track touch distance
+
+
+// old home page
+// function HomePage({ navigation }) {
+//   return (
+//     <View style={styles.container}>
+//       <Text>Home Page</Text>
+
+//       <Animated.View 
+//         style={[styles.ball, { 
+//           opacity: ballOpacity, 
+//           transform: [{ scale: ballScale }] // Apply scaling animation
+//         }]} 
+//       />
+
+//       <Button
+//         title="rest"
+//         onPress={() => navigation.navigate('Rest')}
+//       />
+      
+//       <Button
+//         title="settings"
+//         onPress={() => navigation.navigate('Settings')}
+//       />
+//       <StatusBar style="auto" />
+//     </View>
+//   );
+// }
+
+  // cellTop: {
+  //   borderTopLeftRadius: 10, // Rounded top-left corner
+  //   borderTopRightRadius: 10, // Rounded top-right corner
+  //   backgroundColor: '#424242',
+  // },
+  // cellContent: {
+  //   flexDirection: 'row', 
+  //   alignItems: 'center',
+  //   padding: screenHeight/45, // Adjust the padding as needed
+  //   backgroundColor: '#424242',
+  // },
+  // cellBottom: {
+  //   borderBottomLeftRadius: 10, // Rounded bottom-left corner
+  //   borderBottomRightRadius: 10, // Rounded bottom-right corner
+  //   backgroundColor: '#424242',
+  // },
+  // cellText: {
+  //   flex: 1,
+  //   color: '#ffffff', // White text color
+  // },
+  // cellDetail: {
+  //   color: '#ffffff', // White text color for the detail
+  // },
