@@ -75,5 +75,5 @@ Project Link: [https://github.com/JoAnFe/MobDev-Final](https://github.com/JoAnFe
 ## moodboard
 ![restive/assets/Screenshot 2024-03-15 at 17.14.51.png](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Screenshot%202024-03-15%20at%2017.14.51.png)
 
-## Wire Frames ( high res)
+## wireframes
 ![main screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.20.30.png)
