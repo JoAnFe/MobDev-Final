@@ -27,16 +27,23 @@ These instructions will get you a copy of the project up and running on your loc
    ```
 2. Install NPM packages
    ```sh
-   npm install
+    npm install react-native
+    npm install expo-status-bar
+    npm install @react-navigation/native react-native-screens react-native-safe-area-context
+    npm install @react-navigation/native-stack
+    npm install react-native-vector-icons
+    npm install react-native-gesture-handler
+    npm install react-native-tableview-simple
+
    ```
-3. Start the application (React Native CLI)
+   You could also install using Expo
    ```sh
-   npx react-native run-android
-   npx react-native run-ios
-   ```
-   Or, if using Expo:
+   expo install react-native-screens react-native-safe-area-context react-native-gesture-handler
+    ```
+    
+3. Start the application
    ```sh
-   expo start
+   npx expo start
    ```
 
 ## Usage
