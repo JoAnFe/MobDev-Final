@@ -79,3 +79,8 @@ Project Link: [https://github.com/JoAnFe/MobDev-Final](https://github.com/JoAnFe
 ### wireframes
 
 ![main screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.20.30.png)
+![alternate screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.20.41.png)
+![meditation screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.03.png)
+![settings screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.12.png)
+![rest timer screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.17.png)
+![reset progress pop up](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.22.png)
