@@ -76,6 +76,6 @@ Project Link: [https://github.com/JoAnFe/MobDev-Final](https://github.com/JoAnFe
 
 ![restive/assets/Screenshot 2024-03-15 at 17.14.51.png](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Screenshot%202024-03-15%20at%2017.14.51.png)
 
-## wireframes
+### wireframes
 
 ![main screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.20.30.png)
