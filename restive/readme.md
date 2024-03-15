@@ -1,13 +1,15 @@
 # Mindfulness and Breathing Exercises App
 
-This app is designed to help users manage stress and improve focus through guided breathing techniques. Inspired by mindfulness practices, it offers a simple and effective way to engage in breathing exercises, track progress, and customize session lengths according to individual needs.
+This app is designed to help people manage stress and improve focus through guided breathing techniques. Design to be as mimimal as as distraction free as possible, Restive exists to help you overcome worry and mental fatiuge. Inspired by mindfulness practices, it offers a simple and effective way to engage in breathing exercises, track progress, and customise session lengths according to your needs.
 
 ## Features
 
-- **Dynamic Breathing Visualization**: A visual representation of breathing exercises to guide users through each session.
-- **Customizable Sessions**: Users can adjust the duration of breaths and sessions to fit their personal preferences.
-- **Progress Tracking**: Track the number of completed breathing sessions and visualize progress over time.
-- **Simple, Intuitive Interface**: Designed for ease of use, focusing on a minimalist aesthetic to encourage relaxation and concentration.
+- **Breathing Visualization**: A simple representation of breathing exercises to guide you through each session.
+- **Customizable Sessions**: You can adjust the length of your sessions, mesured in breaths.
+- **Progress Tracking**: Track the number of completed breathing sessions and see a simple counter to track your progress.
+- **Simple, Intuitive Interface**: Designed for ease of use, a minimalist aesthetic keeps distractions at bay.
+
+## Getting Started
 
 ## Getting Started
 
