@@ -8,20 +8,21 @@ import {  TableView, Section, Cell } from 'react-native-tableview-simple';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+
 const { useRef, useState, useEffect, createContext, useContext } = React;
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
  // const [counter, setCounter] = useState(0); // Initialize counter state
 var breathVal = 5000;
+var dotCounter = 'gold';
+var numberofBreaths = 10;
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
-
-
-
 const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
-
 
 // Create a context for global state
 const CircleVisibilityContext = createContext();
@@ -43,7 +44,7 @@ const SmallRedCircle = ({ index }) => {
   const { visibilityCount } = useCircleVisibility();
   return (
     <View style={styles.gridItem}>
-      {index < 10 && (
+      {index < 30 && (
         <View style={styles.smallCircle} />
       )}
     </View>
@@ -52,71 +53,96 @@ const SmallRedCircle = ({ index }) => {
 
 // The modified HomePage component
 function HomePage({ navigation }) {
-  // Assuming ballOpacity and ballScale are defined in your state/logic
-
+  
+  const { visibilityCount } = useCircleVisibility();
   return (
-    <CircleVisibilityProvider>
-      <View style={styles.container}>
-        <View style={styles.gridContainer}>
-          {Array.from({ length: 9 }).map((_, index) => (
-            <SmallRedCircle key={index} index={index} />
-          ))}
+    <View style={styles.container}>
+      <View style={styles.gridContainer}>
+        {Array.from({ length: visibilityCount }).map((_, index) => (
+          <SmallRedCircle key={index} index={index} />
+        ))}
+      </View>
+        
+        <View style={styles.buttonSpace}>
+          <Button
+            title="settings"
+            onPress={() => navigation.navigate('Settings')}
+          />
         </View>
 
-        <TouchableOpacity style={styles.largeCircle} onPress={() => navigation.navigate('Rest')} />
+        <TouchableOpacity
+          style={styles.largeCircle}
+          onPress={() => navigation.navigate('Rest')}
+        />
 
-        <StatusBar style="auto" />
-      </View>
-    </CircleVisibilityProvider>
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
-
 function RestPage({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
-  const ballScale = useRef(new Animated.Value(1)).current; // Initial scale for the ball
+  const ballScale = useRef(new Animated.Value(1)).current; // Initial scale 
+
+  const ballDown =  Animated.timing(ballScale, {
+    toValue: 0, // Scale down
+    duration: breathVal,
+    useNativeDriver: true,
+  });
+
+  const ballUp = Animated.timing(ballScale, {
+    toValue: 1, // Scale up
+    duration: breathVal,
+    useNativeDriver: true,
+  });
+
+  const restTime = Animated.delay(500) // Pause for a split second (500 milliseconds) at original size
+  const meditation = Animated.sequence([
+    ballDown,
+    ballUp,
+    restTime,
+]);
+
+const ballCounter =   useEffect(() => {
+  // Ensures we don't go over 30
+  if (visibilityCount < 18) {
+    setVisibilityCount(visibilityCount + 1);
+  } else {
+    setVisibilityCount(0);
+  }
+}, [visibilityCount, setVisibilityCount]);
+
+const { visibilityCount, setVisibilityCount } = useContext(CircleVisibilityContext);
 
   useEffect(() => {
     // Sequence for fading out text and fading in ball
     Animated.sequence([
       Animated.delay(2000), // Wait...
-
       Animated.timing(fadeAnim, { // Fade out the text
         toValue: 0,
         duration: 1000,
         useNativeDriver: true,
       }),
-
       Animated.timing(ballOpacity, { // Fade in the ball
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
       }),
-
     ]).start(() => {
       // After the sequence is complete, start the breathing effect
       Animated.loop(
-        Animated.sequence([
-          Animated.timing(ballScale, {
-            toValue: 0, // Scale down
-            duration: breathVal,
-            useNativeDriver: true,
-          }),
-          Animated.timing(ballScale, {
-            toValue: 1, // Scale up
-            duration: breathVal,
-            useNativeDriver: true,
-          }),
-
-          Animated.delay(500), // Pause for a split second (500 milliseconds) at original size
-
-        ])
-      ).start();
-
+        meditation,
+        {iterations: numberofBreaths}
+      ).start(() => {
+        ballCounter,
+        {iterations: 1}
+        navigation.navigate('Home')
+      });
     });
   }, [fadeAnim, ballOpacity, ballScale]);
+
 
   return (
     <View style={styles.container}>
@@ -149,7 +175,9 @@ const SystemButton = ({ title, onPress }) => {
     </TouchableOpacity>
   );
 };
+
 const SettingsPage = ({ navigation }) => {
+  const { setVisibilityCount } = useContext(CircleVisibilityContext); // Use useContext to access setVisibilityCount
 
   const DATA = [
     { id: '1', title: 'Default timer', link: 'Timer', detail: '' },
@@ -164,9 +192,15 @@ const SettingsPage = ({ navigation }) => {
         navigation.navigate(link);
       } else if (title === 'Reset progress') {
         // Assuming you want to show an alert for reset progress
+        
         Alert.alert("Reset Progress", "Are you sure?", [
           { text: "Cancel", style: "cancel" },
-          { text: "Yes", onPress: () => console.log("Resetting Progress...") }, // need to add action here
+          { 
+            text: "Yes", onPress: () => {
+              setVisibilityCount(0); // Reset the visibilityCount
+              navigation.navigate('Home'); // Optional: Navigate back to Home
+            }
+          },
         ]);
       }
     };
@@ -189,70 +223,7 @@ const SettingsPage = ({ navigation }) => {
       contentContainerStyle={styles.listInset} // Applying the inset style here
     />
   );
-///////////////////////////////////////////////////////// --- the below works
-//   return (
-//     <View style={styles.settings}>
-//       {/* ... other settings components ... */}
-//       <SystemButton
-//         title="Default timer"
-//         onPress={() => navigation.navigate('Timer')}
-//       />
-//       <SystemButton
-//         title="Reset progress"
-//         onPress={() => {Alert.alert("Progress has been reset ");}}
-//       />
-//       {/* ... other settings components ... */}
-//     </View>
-//   );
-    };
-//////////////////////////////////////////////////////// --- the above works
-
-// const SettingsPage = () => {
-//   return (
-//     <SafeAreaView style={styles.settings}>
-    
-//       <TableView style={styles.tableContainer}>
-      
-//         <Section sectionTintColor="transparent">
-//           <Cell
-//           accessory="DisclosureIndicator"
-//             cellContentView={
-//               <View style={[styles.cellContent, styles.cellTop]}> 
-//                 <Text style={styles.cellText}>Default timer</Text>
-//               </View>
-//             }
-            
-//             onPress={() => {/* Navigate to timer settings */}}
-//           />
-
-//           <Cell
-//           accessory="DisclosureIndicator"
-//             cellContentView={
-//               <View style={[styles.cellContent, styles.cell]}>
-//                 <Text style={styles.cellText}>Reset progress</Text>
-//                 <Text style={styles.cellDetail}></Text>
-//               </View>
-//             }
-//             onPress={() => {Alert.alert("Progress has been reset ");}} // Reset the counter logic
-//           />
-//           <Cell
-//           accessory="DisclosureIndicator"
-//             cellContentView={
-//               <View style={[styles.cellContent, styles.cellBottom]}>
-//                 <Text style={styles.cellText}>Total time spent resting:</Text>
-//                 <Text style={styles.cellDetail}>120 min</Text>
-//               </View>
-//             }
-//             onPress={() => {/* Additional logic if needed */}}
-//           />
-//         </Section>
-       
-//       </TableView>
-      
-//     </SafeAreaView>
-//   );
-// };
-
+};
 
 const InfoButton = () => {
   // Custom accessory view component (e.g. an information icon)
@@ -280,16 +251,17 @@ export default function App() {
 
   return (
     <NavigationContainer theme={DarkTheme}>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomePage} />
-        <Stack.Screen name="Rest" component={RestPage} />
-        <Stack.Screen name="Settings" component={SettingsPage} />
-        <Stack.Screen name="Timer" component={TimerPage} />
-      </Stack.Navigator>
+      <CircleVisibilityProvider>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen name="Rest" component={RestPage} />
+          <Stack.Screen name="Settings" component={SettingsPage} />
+          <Stack.Screen name="Timer" component={TimerPage} />
+        </Stack.Navigator>
+      </CircleVisibilityProvider>
     </NavigationContainer>
   );
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////// STYLES 
 const styles = StyleSheet.create({
@@ -300,6 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', // force dark mode
     position: 'relative', // Needed for absolute positioning
   },
+  
   settings: {
     flex: 1,
     backgroundColor: '#000', 
@@ -356,12 +329,22 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     width: '100%',
     height: '33%',
-    justifyContent: 'space-around',
+    justifyContent: 'left',
     alignItems: 'center',
+    
   },
+
+  buttonSpace: {
+  
+   position: 'absolute', // make sure we dont come before the circle
+    paddingTop: screenHeight/1.5, // ensure we render at bottom of screen
+    alignItems: 'center', 
+  },
+
+
   gridItem: {
-    width: `${100 / 3}%`, // Divide the top third into 3 columns
-    height: '33%', // Each item is 1/3 of the top third
+    width: `${100 / 6}%`, // Divide the top third into 6 columns
+    height: '29%', // Each item is 1/3 of the top third
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -369,7 +352,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'red',
+    backgroundColor: dotCounter ,
   },
   largeCircle: {
     width: circleDiameter,
@@ -377,10 +360,11 @@ const styles = StyleSheet.create({
     borderRadius: circleDiameter / 2,
     backgroundColor: 'blue',
     marginBottom: -(circleDiameter / 3), // Adjust based on your layout needs
+  
   },
 });
 
-// add scrolling gestures
+// old code
 // useRef to track touch distance
 
 
@@ -402,10 +386,10 @@ const styles = StyleSheet.create({
 //         onPress={() => navigation.navigate('Rest')}
 //       />
       
-//       <Button
-//         title="settings"
-//         onPress={() => navigation.navigate('Settings')}
-//       />
+      // <Button
+      //   title="settings"
+      //   onPress={() => navigation.navigate('Settings')}
+      // />
 //       <StatusBar style="auto" />
 //     </View>
 //   );
@@ -434,3 +418,68 @@ const styles = StyleSheet.create({
   // cellDetail: {
   //   color: '#ffffff', // White text color for the detail
   // },
+
+
+///////////////////////////////////////////////////////// --- the below works
+//   return (
+//     <View style={styles.settings}>
+//       {/* ... other settings components ... */}
+//       <SystemButton
+//         title="Default timer"
+//         onPress={() => navigation.navigate('Timer')}
+//       />
+//       <SystemButton
+//         title="Reset progress"
+//         onPress={() => {Alert.alert("Progress has been reset ");}}
+//       />
+//       {/* ... other settings components ... */}
+//     </View>
+//   );
+  
+//////////////////////////////////////////////////////// --- the above works
+
+// const SettingsPage = () => {
+//   return (
+//     <SafeAreaView style={styles.settings}>
+    
+//       <TableView style={styles.tableContainer}>
+      
+//         <Section sectionTintColor="transparent">
+//           <Cell
+//           accessory="DisclosureIndicator"
+//             cellContentView={
+//               <View style={[styles.cellContent, styles.cellTop]}> 
+//                 <Text style={styles.cellText}>Default timer</Text>
+//               </View>
+//             }
+            
+//             onPress={() => {/* Navigate to timer settings */}}
+//           />
+
+//           <Cell
+//           accessory="DisclosureIndicator"
+//             cellContentView={
+//               <View style={[styles.cellContent, styles.cell]}>
+//                 <Text style={styles.cellText}>Reset progress</Text>
+//                 <Text style={styles.cellDetail}></Text>
+//               </View>
+//             }
+//             onPress={() => {Alert.alert("Progress has been reset ");}} // Reset the counter logic
+//           />
+//           <Cell
+//           accessory="DisclosureIndicator"
+//             cellContentView={
+//               <View style={[styles.cellContent, styles.cellBottom]}>
+//                 <Text style={styles.cellText}>Total time spent resting:</Text>
+//                 <Text style={styles.cellDetail}>120 min</Text>
+//               </View>
+//             }
+//             onPress={() => {/* Additional logic if needed */}}
+//           />
+//         </Section>
+       
+//       </TableView>
+      
+//     </SafeAreaView>
+//   );
+// };
