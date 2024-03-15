@@ -1,124 +1,103 @@
 import * as React from 'react';
 import 'react-native-gesture-handler';
-//import React, {useRef, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, SafeAreaView, Alert, TouchableOpacity, FlatList } from 'react-native';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import {  TableView, Section, Cell } from 'react-native-tableview-simple';
+import { Button, StyleSheet, Text, View, useColorScheme, Animated, Dimensions, Alert, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
+import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {  TableView, Section, Cell } from 'react-native-tableview-simple';
 
 const { useRef, useState, useEffect, createContext, useContext } = React;
-
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
- // const [counter, setCounter] = useState(0); // Initialize counter state
-var breathVal = 5000;
-var dotCounter = 'gold';
-var numberofBreaths = 10;
 
+var breathVal = 5000; // the variable that assigns the length of half of one full cycle
+var dotCounter = 'gold'; // ideally this would be reassigned when the cycle runs through the entire grid
+var numberofBreaths = 10; // how long the rest program runs for, where 1 = full cycle
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
 const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
-
-// Create a context for global state
-const CircleVisibilityContext = createContext();
-const useCircleVisibility = () => useContext(CircleVisibilityContext);
-
-// Define a provider component for global state
-const CircleVisibilityProvider = ({ children }) => {
+const CircleVisibilityContext = createContext(); // Creates a context for global state
+const useCircleVisibility = () => useContext(CircleVisibilityContext); // the circle on the rest page
+const CircleVisibilityProvider = ({ children }) => { // Define a provider component for global state
   const [visibilityCount, setVisibilityCount] = useState(0); // Global state for visibility control
-
   return (
     <CircleVisibilityContext.Provider value={{ visibilityCount, setVisibilityCount }}>
       {children}
     </CircleVisibilityContext.Provider>
   );
 };
-
-// Individual small red circle component
-const SmallRedCircle = ({ index }) => {
+const SmallRedCircle = ({ index }) => { // Individual small circle component - its not red, but it used to be
   const { visibilityCount } = useCircleVisibility();
   return (
     <View style={styles.gridItem}>
-      {index < 30 && (
+      {index < 30 && ( // notes the maximum numebr of snall cicrcles that can be rendered.
         <View style={styles.smallCircle} />
       )}
     </View>
   );
 };
-
-// The modified HomePage component
+////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
 function HomePage({ navigation }) {
-  
   const { visibilityCount } = useCircleVisibility();
+
   return (
     <View style={styles.container}>
+
       <View style={styles.gridContainer}>
         {Array.from({ length: visibilityCount }).map((_, index) => (
           <SmallRedCircle key={index} index={index} />
         ))}
       </View>
-        
-        <View style={styles.buttonSpace}>
-          <Button
-            title="settings"
-            onPress={() => navigation.navigate('Settings')}
-          />
-        </View>
 
-        <TouchableOpacity
-          style={styles.largeCircle}
-          onPress={() => navigation.navigate('Rest')}
+      <View style={styles.buttonSpace}>
+        <Button
+          title="settings"
+          onPress={() => navigation.navigate('Settings')}
         />
+      </View>
 
+      <TouchableOpacity
+        style={styles.largeCircle}
+        onPress={() => navigation.navigate('Rest')}
+      />
       <StatusBar style="auto" />
+
     </View>
   );
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
 function RestPage({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
   const ballScale = useRef(new Animated.Value(1)).current; // Initial scale 
+  const restTime = Animated.delay(500) // Pause for a split second (500 milliseconds) at original size
 
   const ballDown =  Animated.timing(ballScale, {
     toValue: 0, // Scale down
     duration: breathVal,
-    useNativeDriver: true,
-  });
-
+    useNativeDriver: true,});
   const ballUp = Animated.timing(ballScale, {
     toValue: 1, // Scale up
     duration: breathVal,
-    useNativeDriver: true,
-  });
-
-  const restTime = Animated.delay(500) // Pause for a split second (500 milliseconds) at original size
+    useNativeDriver: true, });
   const meditation = Animated.sequence([
     ballDown,
     ballUp,
-    restTime,
-]);
+    restTime,]);
+  const ballCounter =   useEffect(() => { // THIS DECLARES [visibilityCount, setVisibilityCount] SO DONT MOVE IT FURTHER DOWN
+    // Ensures we don't go over 30
+    if (visibilityCount < 18) {
+      setVisibilityCount(visibilityCount + 1);
+    } else {
+      setVisibilityCount(0);
+    }
+  }, [visibilityCount, setVisibilityCount]);
+  const { visibilityCount, setVisibilityCount } = useContext(CircleVisibilityContext);
 
-const ballCounter =   useEffect(() => {
-  // Ensures we don't go over 30
-  if (visibilityCount < 18) {
-    setVisibilityCount(visibilityCount + 1);
-  } else {
-    setVisibilityCount(0);
-  }
-}, [visibilityCount, setVisibilityCount]);
-
-const { visibilityCount, setVisibilityCount } = useContext(CircleVisibilityContext);
-
-  useEffect(() => {
-    // Sequence for fading out text and fading in ball
-    Animated.sequence([
+  useEffect(() => { // this is basically the 'rest' function itself...
+    Animated.sequence([ // Sequence for fading out text and fading in ball
       Animated.delay(2000), // Wait...
       Animated.timing(fadeAnim, { // Fade out the text
         toValue: 0,
@@ -130,8 +109,7 @@ const { visibilityCount, setVisibilityCount } = useContext(CircleVisibilityConte
         duration: 1000,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      // After the sequence is complete, start the breathing effect
+    ]).start(() => { // After the sequence is complete, start the breathing effect
       Animated.loop(
         meditation,
         {iterations: numberofBreaths}
@@ -143,68 +121,54 @@ const { visibilityCount, setVisibilityCount } = useContext(CircleVisibilityConte
     });
   }, [fadeAnim, ballOpacity, ballScale]);
 
-
   return (
     <View style={styles.container}>
-
-      <StatusBar style="auto" />
-
+      <StatusBar style="auto"/>
       <Animated.Text 
         style={[styles.fadeText, { 
           opacity: fadeAnim }]}>
         breathe in... {/* text here will fade into display as soon as the page is opened, then fade out as per fadeAnim is assigned in the earlier code */}
       </Animated.Text>
-
       <Animated.View 
         style={[styles.ball, { 
           opacity: ballOpacity, 
           transform: [{ scale: ballScale }] // Apply scaling animation
-        }]} 
-      />
-
+        }]}/>
     </View>
   );
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Settings Page
-const SystemButton = ({ title, onPress }) => {
-  return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
-      <Icon name="chevron-right" size={30} color="#5a5a5f" />
-    </TouchableOpacity>
-  );
-};
-
 const SettingsPage = ({ navigation }) => {
   const { setVisibilityCount } = useContext(CircleVisibilityContext); // Use useContext to access setVisibilityCount
-
+  const SystemButton = ({ title, onPress }) => { // buttons for the settings page, or any other config page
+    return (
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text style={styles.buttonText}>{title}</Text>
+        <Icon name="chevron-right" size={30} color="#5a5a5f" />
+      </TouchableOpacity>
+    );
+  };
   const DATA = [
     { id: '1', title: 'Default timer', link: 'Timer', detail: '' },
     { id: '2', title: 'Reset progress', detail: '' },
     { id: '3', title: 'Total time', detail: '' },
-    // ... more items
   ];
-  
-  const Item = ({ title, link, detail }) => {
+  const Item = ({ title, link, detail }) => { // retuns system buttons as well
     const handlePress = () => {
       if (link) {
         navigation.navigate(link);
       } else if (title === 'Reset progress') {
-        // Assuming you want to show an alert for reset progress
-        
-        Alert.alert("Reset Progress", "Are you sure?", [
+        Alert.alert("Reset Progress", "Are you sure?", [ // an alert for reset progress
           { text: "Cancel", style: "cancel" },
           { 
             text: "Yes", onPress: () => {
               setVisibilityCount(0); // Reset the visibilityCount
-              navigation.navigate('Home'); // Optional: Navigate back to Home
+              navigation.navigate('Home'); // navigate Home
             }
           },
         ]);
       }
     };
-
     return (
       <View style={styles.item}>
         <SystemButton
@@ -214,24 +178,20 @@ const SettingsPage = ({ navigation }) => {
       </View>
     );
   };
-
   return (
     <FlatList
       data={DATA}
       renderItem={({ item }) => <Item title={item.title} link={item.link} detail={item.detail} />}
       keyExtractor={item => item.id}
-      contentContainerStyle={styles.listInset} // Applying the inset style here
+      contentContainerStyle={styles.listInset} // we use the Insrt style to make sure we are not at full width
     />
   );
 };
-
 const InfoButton = () => {
   // Custom accessory view component (e.g. an information icon)
   // React to onPress to show more info about resting time
   return;
 };
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Timer Page
 function TimerPage() {
   return (
@@ -241,7 +201,6 @@ function TimerPage() {
     </View>
   );
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// APP START
 const Stack = createNativeStackNavigator();
 
@@ -262,7 +221,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// STYLES 
 const styles = StyleSheet.create({
   container: {
