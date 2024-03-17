@@ -64,14 +64,13 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## Contact
 
-Project Link: [https://github.com/JoAnFe/MobDev-Final](https://github.com/JoAnFe/MobDev-Final)
+Project Link: [https://github.com/JoAnFe/MobDev-Final/tree/main/restive](https://github.com/JoAnFe/MobDev-Final/tree/main/restive/)
 
 ## Acknowledgements
 
 - [React Navigation](https://reactnavigation.org/)
 - [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
 - [React Native](https://reactnative.dev/)
-- [Choose an Open Source License](https://choosealicense.com)
 - [README Template](https://github.com/othneildrew/Best-README-Template)
 
 ## moodboard

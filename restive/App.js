@@ -15,7 +15,24 @@ const cellHeight = screenWidth/1.4;
 
 var breathVal = 5000; // the variable that assigns the length of half of one full cycle
 var dotCounter = 'gold'; // ideally this would be reassigned when the cycle runs through the entire grid
-var numberofBreaths = 10; // how long the rest program runs for, where 1 = full cycle
+var numberofBreaths = 2; // how long the rest program runs for, where 1 = full cycle
+
+const BreathContext = createContext({
+  numberofBreaths: 10,
+  setNumberOfBreaths: () => {},
+});
+
+export const useBreathContext = () => useContext(BreathContext);
+
+const BreathProvider = ({ children }) => { // this is the context to set the breath timer
+  const [numberofBreaths, setNumberOfBreaths] = useState(10);
+
+  return (
+    <BreathContext.Provider value={{ numberofBreaths, setNumberOfBreaths }}>
+      {children}
+    </BreathContext.Provider>
+  );
+};
 
 const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
 const CircleVisibilityContext = createContext(); // Creates a context for global state
@@ -69,6 +86,7 @@ function HomePage({ navigation }) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
 function RestPage({ navigation }) {
+  console.log(numberofBreaths);
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
   const ballScale = useRef(new Animated.Value(1)).current; // Initial scale 
@@ -110,6 +128,7 @@ function RestPage({ navigation }) {
         useNativeDriver: true,
       }),
     ]).start(() => { // After the sequence is complete, start the breathing effect
+      
       Animated.loop(
         meditation,
         {iterations: numberofBreaths}
@@ -117,9 +136,11 @@ function RestPage({ navigation }) {
         ballCounter,
         {iterations: 1}
         navigation.navigate('Home')
+        
       });
     });
   }, [fadeAnim, ballOpacity, ballScale]);
+  
 
   return (
     <View style={styles.container}>
@@ -140,6 +161,7 @@ function RestPage({ navigation }) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Settings Page
 const SettingsPage = ({ navigation }) => {
   const { setVisibilityCount } = useContext(CircleVisibilityContext); // Use useContext to access setVisibilityCount
+  const { numberofBreaths, setNumberOfBreaths } = useBreathContext();
   const SystemButton = ({ title, onPress }) => { // buttons for the settings page, or any other config page
     return (
       <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -151,7 +173,7 @@ const SettingsPage = ({ navigation }) => {
   const DATA = [
     { id: '1', title: 'Default timer', link: 'Timer', detail: '' },
     { id: '2', title: 'Reset progress', detail: '' },
-    { id: '3', title: 'Total time', detail: '' },
+    { id: '3', title: 'Total time', link: 'Info', detail: '' },
   ];
   const Item = ({ title, link, detail }) => { // retuns system buttons as well
     const handlePress = () => {
@@ -163,6 +185,7 @@ const SettingsPage = ({ navigation }) => {
           { 
             text: "Yes", onPress: () => {
               setVisibilityCount(0); // Reset the visibilityCount
+              setNumberOfBreaths(10);
               navigation.navigate('Home'); // navigate Home
             }
           },
@@ -187,18 +210,56 @@ const SettingsPage = ({ navigation }) => {
     />
   );
 };
-const InfoButton = () => {
-  // Custom accessory view component (e.g. an information icon)
-  // React to onPress to show more info about resting time
-  return;
+
+function InfoButton(){
+  return (
+  <View style={styles.container}>
+    
+    <View style={styles.InfoContainer}>
+      <Text style={styles.counterText}>One session is:</Text>
+    </View>
+    <View style={styles.InfoContainer}>
+      <Text style={styles.counterText}>{numberofBreaths} full breaths.</Text>
+    </View>
+    <Text style={styles.counterText}>-</Text>
+    <View style={styles.InfoContainer}>
+      <Text style={styles.counterText}>Each full breath is:</Text>
+    </View>
+    <View style={styles.InfoContainer}>
+      <Text style={styles.counterText}>{(breathVal/1000)*2} seconds long.</Text>
+    </View>
+
+  <StatusBar style="auto" />
+  </View>
+  );
 };
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Timer Page
 function TimerPage() {
+
+  const { numberofBreaths, setNumberOfBreaths } = useBreathContext();
+
+
+  const incrementBreaths = () => setNumberOfBreaths(numberofBreaths + 1);
+  const decrementBreaths = () => setNumberOfBreaths(prev => (prev > 0 ? prev - 1 : 0));
+
   return (
-    <View style={styles.container}>
-      <Text>...</Text>
-      <StatusBar style="auto" />
+  <View style={styles.container}>
+  <Text style={styles.headerText}>Rest time</Text>
+    <View style={styles.counterContainer}>
+      <Text style={styles.counterText}>{numberofBreaths}</Text>
     </View>
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity onPress={decrementBreaths} style={styles.buttonBreath}>
+        <Text style={styles.buttonText}>-</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={incrementBreaths} style={styles.buttonBreath}>
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
+    </View>
+  <StatusBar style="auto" />
+  </View>
   );
 }
 
@@ -211,14 +272,17 @@ export default function App() {
 
   return (
     <NavigationContainer theme={DarkTheme}>
-      <CircleVisibilityProvider>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomePage} />
-          <Stack.Screen name="Rest" component={RestPage} />
-          <Stack.Screen name="Settings" component={SettingsPage} />
-          <Stack.Screen name="Timer" component={TimerPage} />
-        </Stack.Navigator>
-      </CircleVisibilityProvider>
+      <BreathProvider>
+        <CircleVisibilityProvider>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomePage} />
+            <Stack.Screen name="Rest" component={RestPage} />
+            <Stack.Screen name="Settings" component={SettingsPage} />
+            <Stack.Screen name="Timer" component={TimerPage} />
+            <Stack.Screen name="Info" component={InfoButton} />
+          </Stack.Navigator>
+        </CircleVisibilityProvider>
+      </BreathProvider>
     </NavigationContainer>
   );
 }
@@ -232,18 +296,50 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', // force dark mode
     position: 'relative', // Needed for absolute positioning
   },
-  
   settings: {
     flex: 1,
     backgroundColor: '#000', 
   },
-  button: { // causes issues
+  InfoContainer: {
+    //flex: 2,
+    Width: screenWidth/2,
+   // backgroundColor: 'blue',
+    justifyContent: 'center',
+  },
+  counterContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: screenHeight/2,
+    borderRadius: 8, // Rounded corners!
+  },
+  counterText: {
+    fontSize: 32,
+    color: 'white',
+    //height: 100,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '50%',
+    height: '3%',
+    backgroundColor: 'grey',
+    borderRadius: 100, // Rounded corners!
+  },
+  button: { // causes issues but works on settings
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'transparent',
     padding: 10,
-  
+  },
+  buttonBreath: {
+    //padding: 10,
+    backgroundColor: 'grey',
+    //borderColor: 'black'
+   // borderRadius: 10, // Rounded corners!
   },
   buttonText: {
     color: 'white', // Text color
