@@ -86,3 +86,7 @@ Project Link: [https://github.com/JoAnFe/MobDev-Final](https://github.com/JoAnFe
 ![settings screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.12.png)
 ![rest timer screen](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.17.png)
 ![reset progress pop up](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Wireframes/Hi%20Res/Screenshot%202024-03-15%20at%2017.21.22.png)
+
+### Report
+
+![report](https://github.com/JoAnFe/MobDev-Final/blob/main/restive/assets/Report/cm3050-mobile-development%20project%20report.pdf)
