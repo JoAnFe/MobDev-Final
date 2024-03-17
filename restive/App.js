@@ -15,10 +15,10 @@ const cellHeight = screenWidth/1.4;
 
 var breathVal = 5000; // the variable that assigns the length of half of one full cycle
 var dotCounter = 'gold'; // ideally this would be reassigned when the cycle runs through the entire grid
-var numberofBreaths = 2; // how long the rest program runs for, where 1 = full cycle
+//var numberofBreaths = 10; // how long the rest program runs for, where 1 = full cycle
 
 const BreathContext = createContext({
-  numberofBreaths: 10,
+  //numberofBreaths: 10,
   setNumberOfBreaths: () => {},
 });
 
@@ -86,7 +86,7 @@ function HomePage({ navigation }) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Rest Page 
 function RestPage({ navigation }) {
-  console.log(numberofBreaths);
+  const { numberofBreaths, setNumberOfBreaths } = useBreathContext();
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity for the text
   const ballOpacity = useRef(new Animated.Value(0)).current; // Initial opacity for the ball
   const ballScale = useRef(new Animated.Value(1)).current; // Initial scale 
@@ -112,6 +112,7 @@ function RestPage({ navigation }) {
       setVisibilityCount(0);
     }
   }, [visibilityCount, setVisibilityCount]);
+
   const { visibilityCount, setVisibilityCount } = useContext(CircleVisibilityContext);
 
   useEffect(() => { // this is basically the 'rest' function itself...
@@ -210,8 +211,10 @@ const SettingsPage = ({ navigation }) => {
     />
   );
 };
-
+////////////////////////////////////////////////////////////////////////////////////////////////////// Info Page
 function InfoButton(){
+  const { numberofBreaths, setNumberOfBreaths } = useBreathContext();
+  var minTimer = Math.round((numberofBreaths*(breathVal/1000)*2)/60);
   return (
   <View style={styles.container}>
     
@@ -228,13 +231,18 @@ function InfoButton(){
     <View style={styles.InfoContainer}>
       <Text style={styles.counterText}>{(breathVal/1000)*2} seconds long.</Text>
     </View>
+    <Text style={styles.counterText}>-</Text>
+    <View style={styles.InfoContainer}>
+      <Text style={styles.counterText}>A full meditation takes:</Text>
+    </View>
+    <View style={styles.InfoContainer}>
+      <Text style={styles.counterText}>about {minTimer} minuite(s).</Text>
+    </View>
 
   <StatusBar style="auto" />
   </View>
   );
 };
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Timer Page
 function TimerPage() {
 
@@ -242,7 +250,7 @@ function TimerPage() {
 
 
   const incrementBreaths = () => setNumberOfBreaths(numberofBreaths + 1);
-  const decrementBreaths = () => setNumberOfBreaths(prev => (prev > 0 ? prev - 1 : 0));
+  const decrementBreaths = () => setNumberOfBreaths(prev => (prev > 1 ? prev - 1 : 1));
 
   return (
   <View style={styles.container}>
