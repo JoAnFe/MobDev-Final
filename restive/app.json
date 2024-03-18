@@ -34,9 +34,7 @@
       }
     },
     "owner": "joanfe",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "exposdk:49.0.0",
     "updates": {
       "url": "https://u.expo.dev/06bdadfc-d032-4865-afad-a07791dc05c1"
     }
