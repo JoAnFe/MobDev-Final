@@ -6,12 +6,15 @@ import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {  TableView, Section, Cell } from 'react-native-tableview-simple';
+
 const { useRef, useState, useEffect, createContext, useContext } = React;
+
 const Stack = createNativeStackNavigator();
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
 const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
+
 const CircleVisibilityContext = createContext(); // Creates a context for global state
 const BreathContext = createContext({
   //numberofBreaths: 10,
@@ -51,8 +54,6 @@ const SmallRedCircle = ({ index }) => { // Individual small circle component - i
   );
 };
 export const useBreathContext = () => useContext(BreathContext);
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
 function HomePage({ navigation }) {
   const { visibilityCount } = useCircleVisibility();
@@ -268,7 +269,7 @@ function TimerPage() {
   </View>
   );
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////// APP START
+////////////////////////////////////////////////////////////////////////////////////////////////////// App Start
 export default function App() {
   const scheme = useColorScheme(); // Hook to get the color scheme
   const pan = useRef(new Animated.ValueXY()).current;
@@ -289,7 +290,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////// STYLES 
+////////////////////////////////////////////////////////////////////////////////////////////////////// Style Sheet 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
