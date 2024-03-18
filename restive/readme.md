@@ -9,7 +9,11 @@ This app is designed to help people manage stress and improve focus through guid
 - **Progress Tracking**: Track the number of completed breathing sessions and see a simple counter to track your progress.
 - **Simple, Intuitive Interface**: Designed for ease of use, a minimalist aesthetic keeps distractions at bay.
 
-## Getting Started
+## Expo link
+
+- [expo](https://expo.dev/@joanfe/restive)
+- [iOS link](exp://u.expo.dev/update/a73a9bb3-3602-4d05-bf04-35a3a40208b7)
+- [android link](exp://u.expo.dev/update/6a36edf2-c9e1-4bdd-922d-c596c47ba0c1)
 
 ## Getting Started
 
