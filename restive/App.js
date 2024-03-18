@@ -6,26 +6,25 @@ import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {  TableView, Section, Cell } from 'react-native-tableview-simple';
-
 const { useRef, useState, useEffect, createContext, useContext } = React;
-
+const Stack = createNativeStackNavigator();
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cellHeight = screenWidth/1.4;
-
-var breathVal = 5000; // the variable that assigns the length of half of one full cycle
-var dotCounter = 'gold'; // ideally this would be reassigned when the cycle runs through the entire grid
-//var numberofBreaths = 10; // how long the rest program runs for, where 1 = full cycle
-
+const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
+const CircleVisibilityContext = createContext(); // Creates a context for global state
 const BreathContext = createContext({
   //numberofBreaths: 10,
   setNumberOfBreaths: () => {},
 });
+var breathVal = 5000; // the variable that assigns the length of half of one full cycle
+var dotCounter = 'gold'; // ideally this would be reassigned when the cycle runs through the entire grid
+//var numberofBreaths = 10; // how long the rest program runs for, where 1 = full cycle
 
-export const useBreathContext = () => useContext(BreathContext);
+const useCircleVisibility = () => useContext(CircleVisibilityContext); // the circle on the rest page
 
 const BreathProvider = ({ children }) => { // this is the context to set the breath timer
-  const [numberofBreaths, setNumberOfBreaths] = useState(10);
+  const [numberofBreaths, setNumberOfBreaths] = useState(9);
 
   return (
     <BreathContext.Provider value={{ numberofBreaths, setNumberOfBreaths }}>
@@ -33,10 +32,6 @@ const BreathProvider = ({ children }) => { // this is the context to set the bre
     </BreathContext.Provider>
   );
 };
-
-const circleDiameter = screenWidth * 2 / 3; // Large circle diameter
-const CircleVisibilityContext = createContext(); // Creates a context for global state
-const useCircleVisibility = () => useContext(CircleVisibilityContext); // the circle on the rest page
 const CircleVisibilityProvider = ({ children }) => { // Define a provider component for global state
   const [visibilityCount, setVisibilityCount] = useState(0); // Global state for visibility control
   return (
@@ -55,6 +50,9 @@ const SmallRedCircle = ({ index }) => { // Individual small circle component - i
     </View>
   );
 };
+export const useBreathContext = () => useContext(BreathContext);
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////// Home Page
 function HomePage({ navigation }) {
   const { visibilityCount } = useCircleVisibility();
@@ -270,10 +268,7 @@ function TimerPage() {
   </View>
   );
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// APP START
-const Stack = createNativeStackNavigator();
-
 export default function App() {
   const scheme = useColorScheme(); // Hook to get the color scheme
   const pan = useRef(new Animated.ValueXY()).current;
@@ -294,7 +289,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////// STYLES 
 const styles = StyleSheet.create({
   container: {
@@ -427,123 +421,3 @@ const styles = StyleSheet.create({
   
   },
 });
-
-// old code
-// useRef to track touch distance
-
-
-// old home page
-// function HomePage({ navigation }) {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Home Page</Text>
-
-//       <Animated.View 
-//         style={[styles.ball, { 
-//           opacity: ballOpacity, 
-//           transform: [{ scale: ballScale }] // Apply scaling animation
-//         }]} 
-//       />
-
-//       <Button
-//         title="rest"
-//         onPress={() => navigation.navigate('Rest')}
-//       />
-      
-      // <Button
-      //   title="settings"
-      //   onPress={() => navigation.navigate('Settings')}
-      // />
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
-  // cellTop: {
-  //   borderTopLeftRadius: 10, // Rounded top-left corner
-  //   borderTopRightRadius: 10, // Rounded top-right corner
-  //   backgroundColor: '#424242',
-  // },
-  // cellContent: {
-  //   flexDirection: 'row', 
-  //   alignItems: 'center',
-  //   padding: screenHeight/45, // Adjust the padding as needed
-  //   backgroundColor: '#424242',
-  // },
-  // cellBottom: {
-  //   borderBottomLeftRadius: 10, // Rounded bottom-left corner
-  //   borderBottomRightRadius: 10, // Rounded bottom-right corner
-  //   backgroundColor: '#424242',
-  // },
-  // cellText: {
-  //   flex: 1,
-  //   color: '#ffffff', // White text color
-  // },
-  // cellDetail: {
-  //   color: '#ffffff', // White text color for the detail
-  // },
-
-
-///////////////////////////////////////////////////////// --- the below works
-//   return (
-//     <View style={styles.settings}>
-//       {/* ... other settings components ... */}
-//       <SystemButton
-//         title="Default timer"
-//         onPress={() => navigation.navigate('Timer')}
-//       />
-//       <SystemButton
-//         title="Reset progress"
-//         onPress={() => {Alert.alert("Progress has been reset ");}}
-//       />
-//       {/* ... other settings components ... */}
-//     </View>
-//   );
-  
-//////////////////////////////////////////////////////// --- the above works
-
-// const SettingsPage = () => {
-//   return (
-//     <SafeAreaView style={styles.settings}>
-    
-//       <TableView style={styles.tableContainer}>
-      
-//         <Section sectionTintColor="transparent">
-//           <Cell
-//           accessory="DisclosureIndicator"
-//             cellContentView={
-//               <View style={[styles.cellContent, styles.cellTop]}> 
-//                 <Text style={styles.cellText}>Default timer</Text>
-//               </View>
-//             }
-            
-//             onPress={() => {/* Navigate to timer settings */}}
-//           />
-
-//           <Cell
-//           accessory="DisclosureIndicator"
-//             cellContentView={
-//               <View style={[styles.cellContent, styles.cell]}>
-//                 <Text style={styles.cellText}>Reset progress</Text>
-//                 <Text style={styles.cellDetail}></Text>
-//               </View>
-//             }
-//             onPress={() => {Alert.alert("Progress has been reset ");}} // Reset the counter logic
-//           />
-//           <Cell
-//           accessory="DisclosureIndicator"
-//             cellContentView={
-//               <View style={[styles.cellContent, styles.cellBottom]}>
-//                 <Text style={styles.cellText}>Total time spent resting:</Text>
-//                 <Text style={styles.cellDetail}>120 min</Text>
-//               </View>
-//             }
-//             onPress={() => {/* Additional logic if needed */}}
-//           />
-//         </Section>
-       
-//       </TableView>
-      
-//     </SafeAreaView>
-//   );
-// };
