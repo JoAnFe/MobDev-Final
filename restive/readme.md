@@ -36,6 +36,7 @@ These instructions will get you a copy of the project up and running on your loc
     npm install react-native-vector-icons
     npm install react-native-gesture-handler
     npm install react-native-tableview-simple
+    npm install react-native-sensors
 
    ```
    You could also install using Expo

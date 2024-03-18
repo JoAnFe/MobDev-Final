@@ -22,12 +22,12 @@ const BreathContext = createContext({
 });
 var breathVal = 5000; // the variable that assigns the length of half of one full cycle
 var dotCounter = 'gold'; // ideally this would be reassigned when the cycle runs through the entire grid
-//var numberofBreaths = 10; // how long the rest program runs for, where 1 = full cycle
+var originalBreathCount = 5; // sets on app load how long the rest program runs for, where 1 = full cycle
 
 const useCircleVisibility = () => useContext(CircleVisibilityContext); // the circle on the rest page
 
 const BreathProvider = ({ children }) => { // this is the context to set the breath timer
-  const [numberofBreaths, setNumberOfBreaths] = useState(9);
+  const [numberofBreaths, setNumberOfBreaths] = useState(originalBreathCount); // sets the inital breath count, and allows for it to change
 
   return (
     <BreathContext.Provider value={{ numberofBreaths, setNumberOfBreaths }}>
@@ -185,7 +185,7 @@ const SettingsPage = ({ navigation }) => {
           { 
             text: "Yes", onPress: () => {
               setVisibilityCount(0); // Reset the visibilityCount
-              setNumberOfBreaths(10);
+              setNumberOfBreaths(originalBreathCount); // resets to the global app defualt set by the var at start of the app :)ß
               navigation.navigate('Home'); // navigate Home
             }
           },
